@@ -195,7 +195,14 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 	mc_oneprice = m_steamprice*(1 - m_chargeper / 100);
 	mc_onecharge = m_steamprice*m_chargeper / 100;
 	mc_onediffprice = mc_oneprice - m_price;
-	mc_num = (int)(m_getprice / mc_oneprice) + 1;
+	if ((int)(m_getprice / mc_oneprice) == (m_getprice / mc_oneprice))
+	{
+		mc_num = (int)(m_getprice / mc_oneprice);
+	}
+	else
+	{
+		mc_num = (int)(m_getprice / mc_oneprice) + 1;
+	}
 	mc_allprice = mc_num*mc_oneprice;
 	mc_allcharge = mc_onecharge*mc_num;
 	mc_alldiffprice = mc_onediffprice*mc_num;
