@@ -140,10 +140,13 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 
 	// 给控件添加提示信息
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT3), _T("不固定，需到Steam社区市场核实"));
+
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT5), _T("倒出来总数"));
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT6), _T("单个赚了多少钱"));
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT7), _T("一共赚了多少钱"));
-	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT5), _T("倒出来总数"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT9), _T("一共要花多少钱"));
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT10), _T("相当于以几折买了余额"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT13), _T("请输入要倒出多少余额"));
 
 	UpdateData(FALSE);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
