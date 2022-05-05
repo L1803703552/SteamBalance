@@ -7,6 +7,8 @@
 #include "SteamBalanceDlg.h"
 #include "afxdialogex.h"
 
+#define floors 100.000f
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -91,6 +93,9 @@ BEGIN_MESSAGE_MAP(CSteamBalanceDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CSteamBalanceDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CSteamBalanceDlg::OnBnClickedButton2)
+	ON_WM_CLOSE()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -127,6 +132,22 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	m_chargeper = 0.13043478 * 100;
+	// EnableToolTips(TRUE);//enable use it
+	m_ctrlTT.Create(this);
+	m_ctrlTT.Activate(TRUE);
+	m_ctrlTT.SetTipTextColor(RGB(0, 0, 255));//font color
+	m_ctrlTT.SetDelayTime(2000,150);//delay time
+
+	// 给控件添加提示信息
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT3), _T("不固定，需到Steam社区市场核实"));
+
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT5), _T("倒出来总数"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT6), _T("单个赚了多少钱"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT7), _T("一共赚了多少钱"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT9), _T("一共要花多少钱"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT10), _T("相当于以几折买了余额"));
+	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT13), _T("请输入要倒出多少余额"));
+
 	UpdateData(FALSE);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -191,23 +212,100 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 		MessageBox(_T("请输入有效数据！"), _T("警告"), MB_ICONWARNING);
 		return;
 	}
-	
-	mc_oneprice = m_steamprice*(1 - m_chargeper / 100);
+	if (m_steamprice <= m_price)
+	{
+		MessageBox(_T("市场价格必须高于平台价格！"), _T("警告"), MB_ICONWARNING);
+		return;
+	}
+	mc_oneprice = m_steamprice * (1 - m_chargeper / 100);
 	mc_onecharge = m_steamprice*m_chargeper / 100;
 	mc_onediffprice = mc_oneprice - m_price;
 	if ((int)(m_getprice / mc_oneprice) == (m_getprice / mc_oneprice))
-	{
 		mc_num = (int)(m_getprice / mc_oneprice);
-	}
 	else
-	{
 		mc_num = (int)(m_getprice / mc_oneprice) + 1;
-	}
 	mc_allprice = mc_num*mc_oneprice;
 	mc_allcharge = mc_onecharge*mc_num;
 	mc_alldiffprice = mc_onediffprice*mc_num;
 	mc_allpay = m_price*mc_num;
 	mc_discount = mc_allpay / mc_allprice;
 	mc_discount *= 100;
+	//改成保留两位小数
+	mc_oneprice = floor(mc_oneprice * floors + 0.5) / floors;
+	mc_onecharge = floor(mc_onecharge * floors + 0.5) / floors;
+	mc_onediffprice = floor(mc_onediffprice * floors + 0.5) / floors;
+	mc_allprice = floor(mc_allprice * floors + 0.5) / floors;
+	mc_allcharge = floor(mc_allcharge * floors + 0.5) / floors;
+	mc_alldiffprice = floor(mc_alldiffprice * floors + 0.5) / floors;
+	mc_allpay = floor(mc_allpay * floors + 0.5) / floors;
+	mc_discount = floor(mc_discount * floors + 0.5) / floors;
 	UpdateData(FALSE);
+}
+
+
+
+
+
+void CSteamBalanceDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	m_chargeper = 0.13043478 * 100;
+	m_getprice = 0;
+	m_hIcon = 0;
+	m_price = 0;
+	m_steamprice = 0;
+	mc_allcharge = 0;
+	mc_alldiffprice = 0;
+	mc_allpay = 0;
+	mc_allprice = 0;
+	mc_discount = 0;
+	mc_num = 0;
+	mc_onecharge = 0;
+	mc_onediffprice = 0;
+	mc_oneprice = 0;
+	UpdateData(FALSE);
+}
+
+
+BOOL CSteamBalanceDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	m_ctrlTT.RelayEvent(pMsg);
+	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CSteamBalanceDlg::OnOK()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	OnBnClickedButton1();
+}
+
+
+void CSteamBalanceDlg::OnCancel()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	//CDialogEx::OnCancel();
+}
+void CSteamBalanceDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	EndDialog(IDCANCEL);//取消事件重写了，关闭按钮失效了，重新启动关闭按钮
+	CDialogEx::OnClose();
+}
+
+
+HBRUSH CSteamBalanceDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  在此更改 DC 的任何特性
+	if (pWnd->GetDlgCtrlID() == IDC_TEXT1)//修改控件颜色
+	{
+		pDC->SetTextColor(RGB(255, 0, 0));//用RGB宏改变颜色 
+	}
+	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+	return hbr;
 }

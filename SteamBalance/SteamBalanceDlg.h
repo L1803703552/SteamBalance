@@ -58,6 +58,13 @@ private:
 	double mc_alldiffprice;
 	// µπ”‡∂Ó’€ø€
 	double mc_discount;
+	CToolTipCtrl m_ctrlTT;
 public:
 	afx_msg void OnBnClickedButton1();
+	virtual void OnOK();
+	virtual void OnCancel();
+	afx_msg void OnBnClickedButton2();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnClose();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };
