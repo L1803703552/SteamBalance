@@ -209,6 +209,11 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 		MessageBox(_T("请输入有效数据！"), _T("警告"), MB_ICONWARNING);
 		return;
 	}
+	if (m_steamprice <= m_price)
+	{
+		MessageBox(_T("市场价格必须高于平台价格！"), _T("警告"), MB_ICONWARNING);
+		return;
+	}
 	mc_oneprice = m_steamprice * (1 - m_chargeper / 100);
 	mc_onecharge = m_steamprice*m_chargeper / 100;
 	mc_onediffprice = mc_oneprice - m_price;
