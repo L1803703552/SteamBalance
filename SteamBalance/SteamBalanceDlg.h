@@ -4,7 +4,21 @@
 
 #pragma once
 
+#include <list>
+#include "afxwin.h"
+#include "afxcmn.h"
 
+using namespace std;
+
+struct Info {
+	string name;//饰品名称
+	int num;//数量
+	double ptprice;//平台价格
+	double sqprice;//社区价格
+	double discount;//折扣
+	double dqpay;//倒出余额
+	double hfpay;//总花费
+};
 // CSteamBalanceDlg 对话框
 class CSteamBalanceDlg : public CDialogEx
 {
@@ -59,12 +73,18 @@ private:
 	// 倒余额折扣
 	double mc_discount;
 	CToolTipCtrl m_ctrlTT;
+	list<Info> inf;
+
 public:
 	afx_msg void OnBnClickedButton1();
-	virtual void OnOK();
-	virtual void OnCancel();
 	afx_msg void OnBnClickedButton2();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnClose();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	virtual void OnOK();
+	virtual void OnCancel();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+private:
+	// 饰品名称
+	CString m_name;
+	CListCtrl m_list;
 };
