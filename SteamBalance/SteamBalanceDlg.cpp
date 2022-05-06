@@ -140,9 +140,6 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 
 	m_chargeper = 0.13043478 * 100;
-	m_price = 15.1;
-	m_steamprice = 21.85;
-	m_getprice = 303;
 
 	// EnableToolTips(TRUE);//enable use it
 	m_ctrlTT.Create(this);
