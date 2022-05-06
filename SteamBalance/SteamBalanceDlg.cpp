@@ -66,6 +66,7 @@ CSteamBalanceDlg::CSteamBalanceDlg(CWnd* pParent /*=NULL*/)
 	, mc_allcharge(0)
 	, mc_alldiffprice(0)
 	, mc_discount(0)
+	, m_name(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -86,6 +87,8 @@ void CSteamBalanceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT12, mc_allcharge);
 	DDX_Text(pDX, IDC_EDIT7, mc_alldiffprice);
 	DDX_Text(pDX, IDC_EDIT10, mc_discount);
+	DDX_Text(pDX, IDC_EDIT14, m_name);
+	DDX_Control(pDX, IDC_LIST1, m_list);
 }
 
 BEGIN_MESSAGE_MAP(CSteamBalanceDlg, CDialogEx)
@@ -148,6 +151,16 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT10), _T("相当于以几折买了余额"));
 	m_ctrlTT.AddTool(GetDlgItem(IDC_EDIT13), _T("请输入要倒出多少余额"));
 
+	// 信息保存
+	m_list.SetExtendedStyle(m_list.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+	CString field[] = { _T("饰品名称"), _T("平台价格"), _T("市场价格"), _T("数量"),_T("总倒出"), _T("总花费"), _T("折扣") };
+	m_list.InsertColumn(1, field[0], LVCFMT_CENTER, 120);
+	m_list.InsertColumn(2, field[1], LVCFMT_CENTER, 70);
+	m_list.InsertColumn(3, field[2], LVCFMT_CENTER, 70);
+	m_list.InsertColumn(4, field[3], LVCFMT_CENTER, 50);
+	m_list.InsertColumn(5, field[4], LVCFMT_CENTER, 60);
+	m_list.InsertColumn(6, field[5], LVCFMT_CENTER, 60);
+	m_list.InsertColumn(7, field[6], LVCFMT_CENTER, 60);
 	UpdateData(FALSE);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -243,9 +256,6 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 }
 
 
-
-
-
 void CSteamBalanceDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -264,6 +274,7 @@ void CSteamBalanceDlg::OnBnClickedButton2()
 	mc_onecharge = 0;
 	mc_onediffprice = 0;
 	mc_oneprice = 0;
+	m_name.Empty();
 	UpdateData(FALSE);
 }
 
@@ -309,3 +320,4 @@ HBRUSH CSteamBalanceDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
 	return hbr;
 }
+
