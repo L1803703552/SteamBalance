@@ -89,6 +89,7 @@ void CSteamBalanceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT10, mc_discount);
 	DDX_Text(pDX, IDC_EDIT14, m_name);
 	DDX_Control(pDX, IDC_LIST1, m_list);
+	DDX_Control(pDX, IDC_BUTTON3, m_btm3);
 }
 
 BEGIN_MESSAGE_MAP(CSteamBalanceDlg, CDialogEx)
@@ -99,6 +100,9 @@ BEGIN_MESSAGE_MAP(CSteamBalanceDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON2, &CSteamBalanceDlg::OnBnClickedButton2)
 	ON_WM_CLOSE()
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_BUTTON4, &CSteamBalanceDlg::OnBnClickedButton4)
+	ON_BN_CLICKED(IDC_BUTTON5, &CSteamBalanceDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON3, &CSteamBalanceDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -134,7 +138,12 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+
 	m_chargeper = 0.13043478 * 100;
+	m_price = 15.1;
+	m_steamprice = 21.85;
+	m_getprice = 303;
+
 	// EnableToolTips(TRUE);//enable use it
 	m_ctrlTT.Create(this);
 	m_ctrlTT.Activate(TRUE);
@@ -153,7 +162,7 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 
 	// 信息保存
 	m_list.SetExtendedStyle(m_list.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-	CString field[] = { _T("饰品名称"), _T("平台价格"), _T("市场价格"), _T("数量"),_T("总倒出"), _T("总花费"), _T("折扣") };
+	CString field[] = { _T("饰品名称"), _T("平台价格"), _T("市场价格"), _T("数量"),_T("总倒出"), _T("总花费"), _T("折扣率") };
 	m_list.InsertColumn(1, field[0], LVCFMT_CENTER, 120);
 	m_list.InsertColumn(2, field[1], LVCFMT_CENTER, 70);
 	m_list.InsertColumn(3, field[2], LVCFMT_CENTER, 70);
@@ -161,7 +170,10 @@ BOOL CSteamBalanceDlg::OnInitDialog()
 	m_list.InsertColumn(5, field[4], LVCFMT_CENTER, 60);
 	m_list.InsertColumn(6, field[5], LVCFMT_CENTER, 60);
 	m_list.InsertColumn(7, field[6], LVCFMT_CENTER, 60);
+	SetWindowPos(NULL, 0, 0, 594, 384, SWP_NOMOVE);
 	UpdateData(FALSE);
+	inf.clear();//清空结构体列表内容
+	count = 0;
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -252,6 +264,40 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 	mc_alldiffprice = floor(mc_alldiffprice * floors + 0.5) / floors;
 	mc_allpay = floor(mc_allpay * floors + 0.5) / floors;
 	mc_discount = floor(mc_discount * floors + 0.5) / floors;
+
+	//存到结构体列表里面
+	Info temp;
+	if (m_name.IsEmpty())
+	{
+		temp.name = "饰品";
+	}
+	else
+		temp.name = CT2A(m_name.GetBuffer());//unioncode编码转换
+	temp.discount = mc_discount;
+	temp.dqpay = mc_allprice;
+	temp.hfpay = mc_allpay;
+	temp.num = mc_num;
+	temp.ptprice = m_price;
+	temp.sqprice = m_steamprice;
+
+	//将数据刷到控件上
+	CString str;
+	int w = 1;
+	str = CA2T(temp.name.c_str());
+	m_list.InsertItem(count, str);
+	str.Format(_T("%.2lf"), temp.ptprice);
+	m_list.SetItemText(count, w++, str);
+	str.Format(_T("%.2lf"), temp.sqprice);
+	m_list.SetItemText(count, w++, str);
+	str.Format(_T("%d"), temp.num);
+	m_list.SetItemText(count, w++, str);
+	str.Format(_T("%.2lf"), temp.dqpay);
+	m_list.SetItemText(count, w++, str);
+	str.Format(_T("%.2lf"), temp.hfpay);
+	m_list.SetItemText(count, w++, str);
+	str.Format(_T("%.2lf%%"), temp.discount);
+	m_list.SetItemText(count, w++, str);
+	inf.push_back(temp);
 	UpdateData(FALSE);
 }
 
@@ -320,4 +366,66 @@ HBRUSH CSteamBalanceDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
 	return hbr;
 }
+
+void CSteamBalanceDlg::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	//修改窗口大小
+	UpdateData(TRUE);
+	CString str, t1, t2;
+	t1 = _T("详细信息>>");
+	t2 = _T("详细信息<<");
+	m_btm3.GetWindowTextW(str);
+	if (str == t2)
+	{
+		SetWindowPos(NULL, 0, 0, 594, 384, SWP_NOMOVE);
+		m_btm3.SetWindowTextW(t1);
+	}
+	else
+	{
+		SetWindowPos(NULL, 0, 0, 594, 604, SWP_NOMOVE);
+		m_btm3.SetWindowTextW(t2);
+	}
+	UpdateData(FALSE);
+}
+
+void CSteamBalanceDlg::OnBnClickedButton4()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_list.DeleteAllItems();
+	inf.clear();
+	count = 0;
+}
+
+
+void CSteamBalanceDlg::OnBnClickedButton5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	ofstream ofs;
+	CString gReadFilePathName;
+	CFileDialog fileDlg(FALSE, _T("csv"), _T("信息导出"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Excel表格 (*.csv)|.csv|文本文档 (*.txt)|*.txt|All File (*.*)|*.*||"), NULL);
+	if (fileDlg.DoModal() == IDOK)    //弹出对话框
+	{
+		gReadFilePathName = fileDlg.GetPathName();
+		//AfxMessageBox(_T("OK"));
+		ofs.open(gReadFilePathName.GetBuffer(), ios::out | ios::trunc);
+		ofs << "饰品名称," << "平台价格," << "市场价格," << "数量," << "总倒出," << "总花费," << "折扣率" << endl;
+		list<Info>::iterator it;
+		for (it = inf.begin(); it != inf.end(); it++)
+		{
+			ofs << it->name.c_str() << ",";
+			ofs << fixed << setprecision(2);
+			ofs << it->ptprice << ",";
+			ofs << it->sqprice << ",";
+			ofs << it->num << ",";
+			ofs << it->dqpay << ",";
+			ofs << it->hfpay << ",";
+			ofs << it->discount << "%";
+			ofs << endl;
+		}
+		ofs.close();
+		MessageBox(_T("保存成功！"), _T("提示"), MB_ICONINFORMATION);
+	}
+}
+
 

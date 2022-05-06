@@ -7,6 +7,9 @@
 #include <list>
 #include "afxwin.h"
 #include "afxcmn.h"
+#include <fstream>
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -74,6 +77,7 @@ private:
 	double mc_discount;
 	CToolTipCtrl m_ctrlTT;
 	list<Info> inf;
+	int count;
 
 public:
 	afx_msg void OnBnClickedButton1();
@@ -87,4 +91,10 @@ private:
 	// ÊÎÆ·Ãû³Æ
 	CString m_name;
 	CListCtrl m_list;
+public:
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton5();
+	afx_msg void OnBnClickedButton3();
+private:
+	CButton m_btm3;
 };
