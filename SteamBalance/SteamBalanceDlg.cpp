@@ -295,6 +295,7 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 	str.Format(_T("%.2lf%%"), temp.discount);
 	m_list.SetItemText(count, w++, str);
 	inf.push_back(temp);
+	count++;
 	UpdateData(FALSE);
 }
 
