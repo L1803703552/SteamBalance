@@ -229,6 +229,8 @@ void CSteamBalanceDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
+	if (m_getprice == 0)
+		m_getprice = 1;
 	if (m_steamprice == 0 || m_price == 0 || m_getprice == 0)
 	{
 		MessageBox(_T("请输入有效数据！"), _T("警告"), MB_ICONWARNING);
